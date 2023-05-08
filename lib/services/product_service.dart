@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 Future<List<dynamic>> fetchProducts() async {
-  var apiUrl = "https://en3hu5n1lk.execute-api.eu-north-1.amazonaws.com/items";
+  var apiUrl = "YOUR_API_HERE";
   try {
     final response = await http.get(Uri.parse(apiUrl));
     if(response.statusCode == 200){
