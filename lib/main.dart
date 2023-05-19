@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_ecommerce_ui_kit/services/product_service.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_ecommerce_ui_kit/auth/auth.dart';
 import 'package:flutter_ecommerce_ui_kit/blocks/auth_block.dart';
@@ -16,7 +17,10 @@ void main() {
   WidgetsFlutterBinding.ensureInitialized();
   final Locale locale = Locale('en');
   runApp(MultiProvider(
-    providers: [ChangeNotifierProvider<AuthBlock>.value(value: AuthBlock())],
+    providers: [
+      ChangeNotifierProvider<AuthBlock>.value(value: AuthBlock()),
+      ChangeNotifierProvider<ProductProvider>.value(value: ProductProvider())
+    ],
     child: MaterialApp(
       localizationsDelegates: [
         AppLocalizations.delegate,

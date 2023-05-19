@@ -107,7 +107,24 @@ class Products extends StatelessWidget {
                                   style: TextStyle(color: Colors.black, fontSize: 16),
                                 ),
                               )
-                          )
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 20.0, right: 20, top: 50, bottom: 10),
+                            child: ButtonTheme(
+                              buttonColor: Theme.of(context).primaryColor,
+                              minWidth: double.infinity,
+                              height: 40.0,
+                              child: ElevatedButton(
+                                onPressed: () {
+
+                                },
+                                child: Text(
+                                  "Add to Cart",
+                                  style: TextStyle(color: Colors.white, fontSize: 16),
+                                ),
+                              ),
+                            ),
+                          ),
                         ],
                       ),
                     ],

@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_ecommerce_ui_kit/localizations.dart';
 import 'package:flutter_ecommerce_ui_kit/models/product.dart';
+import 'package:provider/provider.dart';
 
 import '../services/product_service.dart';
 import 'drawer.dart';
@@ -25,6 +26,8 @@ class _HomeState extends State<Home> {
   ];
   @override
   Widget build(BuildContext context) {
+    var prodPrv = Provider.of<ProductProvider>(context);
+
     return Scaffold(
       drawer: Drawer(
         child: AppDrawer(),
@@ -77,15 +80,15 @@ class _HomeState extends State<Home> {
                         margin: EdgeInsets.symmetric(vertical: 8.0),
                         height: 240.0,
                         child: FutureBuilder(
-                          future: fetchProducts(),
-                          builder: (context,AsyncSnapshot<List> ss) {
+                          future: prodPrv.fetchProducts(),
+                          builder: (context,AsyncSnapshot<List<Product>> ss) {
                             if(ss.connectionState == ConnectionState.waiting)
                               return Center(child: CircularProgressIndicator());
                             return ListView.builder(
                               scrollDirection: Axis.horizontal,
-                              itemCount: ss.data!.length,
+                              itemCount: prodPrv.numOfProd,
                               itemBuilder: (context, index) {
-                                var product = Product.fromJson(ss.data![index]);
+                                var product = prodPrv.listOfProducts[index];
                                 var imageURL = imgList[Random().nextInt(6)];
                                 return Builder(
                                   builder: (BuildContext context) {
