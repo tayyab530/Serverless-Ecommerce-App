@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_ecommerce_ui_kit/blocks/auth_block.dart';
+import 'package:flutter_ecommerce_ui_kit/services/cart_service.dart';
 import 'package:provider/provider.dart';
 
 class AppDrawer extends StatefulWidget {
@@ -11,6 +12,8 @@ class _AppDrawerState extends State<AppDrawer> {
   @override
   Widget build(BuildContext context) {
     AuthBlock auth = Provider.of<AuthBlock>(context);
+    final cartPrv = Provider.of<CartProvider>(context,listen: false);
+
     return Column(
       children: <Widget>[
         if (auth.isLoggedIn)
@@ -38,44 +41,44 @@ class _AppDrawerState extends State<AppDrawer> {
                   Navigator.pop(context);
                 },
               ),
-              ListTile(
-                leading: Icon(Icons.shopping_basket,
-                    color: Theme.of(context).colorScheme.secondary),
-                title: Text('Shop'),
-                trailing: Text('New',
-                    style: TextStyle(color: Theme.of(context).primaryColor)),
-                onTap: () {
-                  Navigator.pop(context);
-                  Navigator.pushNamed(context, '/shop');
-                },
-              ),
-              ListTile(
-                leading:
-                    Icon(Icons.category, color: Theme.of(context).colorScheme.secondary),
-                title: Text('Categorise'),
-                onTap: () {
-                  Navigator.pop(context);
-                  Navigator.pushNamed(context, '/categorise');
-                },
-              ),
-              ListTile(
-                leading:
-                    Icon(Icons.favorite, color: Theme.of(context).colorScheme.secondary),
-                title: Text('My Wishlist'),
-                trailing: Container(
-                  padding: const EdgeInsets.all(10.0),
-                  decoration: new BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Theme.of(context).primaryColor,
-                  ),
-                  child: Text('4',
-                      style: TextStyle(color: Colors.white, fontSize: 10.0)),
-                ),
-                onTap: () {
-                  Navigator.pop(context);
-                  Navigator.pushNamed(context, '/wishlist');
-                },
-              ),
+              // ListTile(
+              //   leading: Icon(Icons.shopping_basket,
+              //       color: Theme.of(context).colorScheme.secondary),
+              //   title: Text('Shop'),
+              //   trailing: Text('New',
+              //       style: TextStyle(color: Theme.of(context).primaryColor)),
+              //   onTap: () {
+              //     Navigator.pop(context);
+              //     Navigator.pushNamed(context, '/shop');
+              //   },
+              // ),
+              // ListTile(
+              //   leading:
+              //       Icon(Icons.category, color: Theme.of(context).colorScheme.secondary),
+              //   title: Text('Categorise'),
+              //   onTap: () {
+              //     Navigator.pop(context);
+              //     Navigator.pushNamed(context, '/categorise');
+              //   },
+              // ),
+              // ListTile(
+              //   leading:
+              //       Icon(Icons.favorite, color: Theme.of(context).colorScheme.secondary),
+              //   title: Text('My Wishlist'),
+              //   trailing: Container(
+              //     padding: const EdgeInsets.all(10.0),
+              //     decoration: new BoxDecoration(
+              //       shape: BoxShape.circle,
+              //       color: Theme.of(context).primaryColor,
+              //     ),
+              //     child: Text('4',
+              //         style: TextStyle(color: Colors.white, fontSize: 10.0)),
+              //   ),
+              //   onTap: () {
+              //     Navigator.pop(context);
+              //     Navigator.pushNamed(context, '/wishlist');
+              //   },
+              // ),
               ListTile(
                 leading: Icon(Icons.shopping_cart,
                     color: Theme.of(context).colorScheme.secondary),
@@ -86,22 +89,26 @@ class _AppDrawerState extends State<AppDrawer> {
                     shape: BoxShape.circle,
                     color: Theme.of(context).primaryColor,
                   ),
-                  child: Text('2',
-                      style: TextStyle(color: Colors.white, fontSize: 10.0)),
+                  child: Consumer<CartProvider>(
+                    builder: (context,prv,_) {
+                      return Text(prv.numOfProd.toString(),
+                          style: TextStyle(color: Colors.white, fontSize: 10.0));
+                    }
+                  ),
                 ),
                 onTap: () {
                   Navigator.pop(context);
                   Navigator.pushNamed(context, '/cart');
                 },
               ),
-              ListTile(
-                leading: Icon(Icons.lock, color: Theme.of(context).colorScheme.secondary),
-                title: Text('Login'),
-                onTap: () {
-                  Navigator.pop(context);
-                  Navigator.pushNamed(context, '/auth');
-                },
-              ),
+              // ListTile(
+              //   leading: Icon(Icons.lock, color: Theme.of(context).colorScheme.secondary),
+              //   title: Text('Login'),
+              //   onTap: () {
+              //     Navigator.pop(context);
+              //     Navigator.pushNamed(context, '/auth');
+              //   },
+              // ),
               Divider(),
               ListTile(
                 leading:
@@ -112,14 +119,14 @@ class _AppDrawerState extends State<AppDrawer> {
                   Navigator.pushNamed(context, '/settings');
                 },
               ),
-              ListTile(
-                leading: Icon(Icons.exit_to_app,
-                    color: Theme.of(context).colorScheme.secondary),
-                title: Text('Logout'),
-                onTap: () async {
-                  await auth.logout();
-                },
-              )
+              // ListTile(
+              //   leading: Icon(Icons.exit_to_app,
+              //       color: Theme.of(context).colorScheme.secondary),
+              //   title: Text('Logout'),
+              //   onTap: () async {
+              //     await auth.logout();
+              //   },
+              // )
             ],
           ),
         )

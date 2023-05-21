@@ -6,20 +6,36 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:fluttertoast/fluttertoast.dart';
 
+String userId = "1";
+
 class AuthService {
   final storage = FlutterSecureStorage();
   // Create storage
-  Future<Map> login(UserCredential userCredential) async {
-    final response = await http.post(Uri.parse('$BASE_URL/jwt-auth/v1/token'), body: {
-      'username': userCredential.usernameOrEmail,
-      'password': userCredential.password
-    });
+  Future<http.Response> login(UserCredential userCredential) async {
+    var body = jsonEncode(
+        {
+          'email': userCredential.usernameOrEmail,
+          'password': userCredential.password
+        });
+    final response = await http.post(
+        Uri.parse(
+            'https://c38xt4v3ka.execute-api.eu-north-1.amazonaws.com/users'),
+        body: body,
+
+      headers: {"Content-Type": "application/json"});
 
     if (response.statusCode == 200) {
       // If the call to the server was successful, parse the JSON.
       // return User.fromJson(json.decode(response.body));
-      setUser(response.body);
-      return jsonDecode(response.body);
+      userId = userCredential.usernameOrEmail;
+      Map<String, dynamic> json = jsonDecode(response.body);
+      String effect = json['policyDocument']['Statement'][0]['Effect'];
+      print(effect);
+      var perm = checkPermission(effect);
+      if(!perm){
+        return http.Response("Error", 400);
+      }
+      // setUser(response.body);
     } else {
       if (response.statusCode == 403) {
         Fluttertoast.showToast(
@@ -30,21 +46,27 @@ class AuthService {
       }
       // If that call was not successful, throw an error.
 //      throw Exception(response.body);
-      return jsonDecode(response.body);
     }
+    return response;
   }
 
-  Future<Map> register(User user) async {
-    final response = await http.post(Uri.parse('$BASE_URL/tradebakerz/wc/v1/register'),
-        body: {
-          'username': user.username,
+  bool checkPermission(String effect){
+    if(effect == "Allow")
+      return true;
+    return false;
+  }
+
+  Future<http.Response> register(User user) async {
+    final response = await http
+        .post(Uri.parse('https://9ka6j8i25d.execute-api.eu-north-1.amazonaws.com/users'),
+        body: jsonEncode({
           'password': user.password,
           'email': user.email
-        });
+        }));
     if (response.statusCode == 200) {
       // If the call to the server was successful, parse the JSON.
       // return User.fromJson(json.decode(response.body));
-      return jsonDecode(response.body);
+      userId = user.email;
     } else {
       if (response.statusCode == 400) {
         Fluttertoast.showToast(
@@ -56,8 +78,8 @@ class AuthService {
       }
       // If that call was not successful, throw an error.
 //      throw Exception(response.body);
-      return jsonDecode(response.body);
     }
+    return response;
   }
 
   setUser(String value) async {
@@ -71,6 +93,7 @@ class AuthService {
     }
     return {};
   }
+
   logout() async {
     await storage.delete(key: 'user');
   }

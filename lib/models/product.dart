@@ -1,7 +1,7 @@
 
 
 class Product {
-  final int price;
+  final double price;
   final String id;
   final String name;
 
@@ -13,7 +13,7 @@ class Product {
 
   factory Product.fromJson(Map<String, dynamic> json) {
     return Product(
-      price: json['price'] as int,
+      price: json['price'] as double,
       id: json['id'] as String,
       name: json['name'] as String,
     );

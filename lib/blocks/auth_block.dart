@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_ecommerce_ui_kit/models/user.dart';
 import 'package:flutter_ecommerce_ui_kit/services/auth_service.dart';
+import 'package:http/src/response.dart';
 
 class AuthBlock extends ChangeNotifier {
   AuthBlock() {
@@ -46,19 +49,21 @@ class AuthBlock extends ChangeNotifier {
     notifyListeners();
   }
 
-  login(UserCredential userCredential) async {
+  Future<Response> login(UserCredential userCredential) async {
     loading = true;
     loadingType = 'login';
-    await _authService.login(userCredential);
-    setUser();
+    var res = await _authService.login(userCredential);
+    // setUser();
     loading = false;
+    return res;
   }
 
-  register(User user) async {
+  Future<Response> register(User user) async {
     loading = true;
     loadingType = 'register';
-    await _authService.register(user);
+    var res = await _authService.register(user);
     loading = false;
+    return res;
   }
 
   logout() async {

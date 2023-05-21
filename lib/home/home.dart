@@ -100,7 +100,7 @@ class _HomeState extends State<Home> {
                                           onTap: () {
                                             Navigator.pushNamed(
                                                 context, '/products',
-                                                arguments: imageURL);
+                                                arguments: {"url":imageURL,"pId":product.id});
                                           },
                                           child: Column(
                                             crossAxisAlignment:

@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_ecommerce_ui_kit/auth/signin.dart';
+import 'package:flutter_ecommerce_ui_kit/services/cart_service.dart';
+import 'package:flutter_ecommerce_ui_kit/services/cart_service.dart';
 import 'package:flutter_ecommerce_ui_kit/services/product_service.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_ecommerce_ui_kit/auth/auth.dart';
@@ -13,13 +16,16 @@ import 'package:flutter_ecommerce_ui_kit/shop/shop.dart';
 import 'package:flutter_ecommerce_ui_kit/wishlist.dart';
 import 'package:provider/provider.dart';
 
+import 'auth/signup.dart';
+
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   final Locale locale = Locale('en');
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider<AuthBlock>.value(value: AuthBlock()),
-      ChangeNotifierProvider<ProductProvider>.value(value: ProductProvider())
+      ChangeNotifierProvider<ProductProvider>.value(value: ProductProvider()),
+      ChangeNotifierProvider<CartProvider>.value(value: CartProvider())
     ],
     child: MaterialApp(
       localizationsDelegates: [
@@ -37,9 +43,11 @@ void main() {
             .copyWith(secondary: Colors.lightBlue.shade900),
         fontFamily: locale.languageCode == 'ar' ? 'Dubai' : 'Lato',
       ),
-      initialRoute: '/',
+      initialRoute: '/signIn',
       routes: <String, WidgetBuilder>{
         '/': (BuildContext context) => Home(),
+        "/signIn": (BuildContext context) => SignIn(),
+        "/signUp": (BuildContext context) => SignUp(),
         '/auth': (BuildContext context) => Auth(),
         '/shop': (BuildContext context) => Shop(),
         '/categorise': (BuildContext context) => Categorise(),

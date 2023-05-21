@@ -1,11 +1,19 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_ecommerce_ui_kit/services/cart_service.dart';
+import 'package:flutter_ecommerce_ui_kit/services/product_service.dart';
 import 'package:flutter_rating_stars/flutter_rating_stars.dart';
+import 'package:provider/provider.dart';
 
 class Products extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final imageUrl = ModalRoute.of(context)!.settings.arguments;
+    final Map<String,String> args = (ModalRoute.of(context)!.settings.arguments) as Map<String,String>;
+    final imageUrl = args!["url"];
+    final productId = args!["pId"];
+    final prvProd = Provider.of<ProductProvider>(context,listen: false);
+    final product = prvProd.getProductById(productId!);
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Product Detail'),
@@ -40,7 +48,7 @@ class Products extends StatelessWidget {
                         child: Padding(
                           padding: const EdgeInsets.only(top: 15, bottom: 15),
                           child: Text(
-                            'Product Title Name',
+                            product.name,
                             style: TextStyle(color: Colors.black, fontSize: 24, fontWeight: FontWeight.w600),
                           ),
                         ),
@@ -55,7 +63,7 @@ class Products extends StatelessWidget {
                                 Padding(
                                   padding: const EdgeInsets.only(right: 10.0),
                                   child: Text(
-                                    '\$90',
+                                    '\$${product.price}',
                                     style: TextStyle(
                                         color: Theme.of(context).primaryColor,
                                         fontSize: 20,
@@ -64,7 +72,7 @@ class Products extends StatelessWidget {
                                   ),
                                 ),
                                 Text(
-                                    '\$190',
+                                    '\$${(product.price + product.price * 0.1).toStringAsFixed(2)}',
                                     style: TextStyle(
                                       color: Colors.black,
                                         fontSize: 16,
@@ -116,7 +124,15 @@ class Products extends StatelessWidget {
                               height: 40.0,
                               child: ElevatedButton(
                                 onPressed: () {
+                                  var prodPrv = Provider.of<ProductProvider>(context,listen: false);
+                                  var cartPrv = Provider.of<CartProvider>(context,listen: false);
 
+                                  var prod = prodPrv.getProductById(productId!);
+                                  cartPrv.addProductToCart(prod);
+                                  print("Cart Products: " + cartPrv.cart.listOfProducts.toString());
+
+                                  var snackBar = SnackBar(content: Text("Added to the Cart"));
+                                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
                                 },
                                 child: Text(
                                   "Add to Cart",

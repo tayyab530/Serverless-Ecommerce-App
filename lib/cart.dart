@@ -1,5 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter_ecommerce_ui_kit/services/cart_service.dart';
+import 'package:provider/provider.dart';
 
 class CartList extends StatefulWidget {
   @override
@@ -8,15 +12,17 @@ class CartList extends StatefulWidget {
 
 class _CartListState extends State<CartList> {
 
-  final List<Map<dynamic, dynamic>> products = [
-    {'name': 'IPhone', 'rating': 3.0, 'image': 'https://images.unsplash.com/photo-1520342868574-5fa3804e551c?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=6ff92caffcdd63681a35134a6770ed3b&auto=format&fit=crop&w=1951&q=80', 'price': '200'},
-    {'name': 'IPhone X 2', 'rating': 3.0, 'image': 'https://images.unsplash.com/photo-1522205408450-add114ad53fe?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=368f45b0888aeb0b7b08e3a1084d3ede&auto=format&fit=crop&w=1950&q=80', 'price': '200'},
-    {'name': 'IPhone 11', 'rating': 4.0, 'image': 'https://images.unsplash.com/photo-1519125323398-675f0ddb6308?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=94a1e718d89ca60a6337a6008341ca50&auto=format&fit=crop&w=1950&q=80', 'price': '200'},
+  final List<String> images = [
+    'https://images.unsplash.com/photo-1520342868574-5fa3804e551c?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=6ff92caffcdd63681a35134a6770ed3b&auto=format&fit=crop&w=1951&q=80',
+    'https://images.unsplash.com/photo-1522205408450-add114ad53fe?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=368f45b0888aeb0b7b08e3a1084d3ede&auto=format&fit=crop&w=1950&q=80',
+    'https://images.unsplash.com/photo-1519125323398-675f0ddb6308?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=94a1e718d89ca60a6337a6008341ca50&auto=format&fit=crop&w=1950&q=80',
 
   ];
 
   @override
   Widget build(BuildContext context) {
+    var cartPrv = Provider.of<CartProvider>(context,listen: false);
+    var products = cartPrv.cart.listOfProducts;
     return Scaffold(
         appBar: AppBar(
           title: Text('Cart'),
@@ -44,11 +50,11 @@ class _CartListState extends State<CartList> {
                         if(direction == DismissDirection.endToStart) {
                           // Then show a snackbar.
                           ScaffoldMessenger.of(context)
-                              .showSnackBar(SnackBar(content: Text(item['name'] + " dismissed"), duration: Duration(seconds: 1)));
+                              .showSnackBar(SnackBar(content: Text(item.name + " dismissed"), duration: Duration(seconds: 1)));
                         } else {
                           // Then show a snackbar.
                           ScaffoldMessenger.of(context)
-                              .showSnackBar(SnackBar(content: Text(item['name'] + " added to carts"), duration: Duration(seconds: 1)));
+                              .showSnackBar(SnackBar(content: Text(item.name + " added to carts"), duration: Duration(seconds: 1)));
                         }
                         // Remove the item from the data source.
                         setState(() {
@@ -96,7 +102,7 @@ class _CartListState extends State<CartList> {
                             Padding(
                               padding: const EdgeInsets.only(top: 10.0, bottom: 10.0),
                               child: ListTile(
-                                trailing: Text('\$ ${item['price']}'),
+                                trailing: Text('\$ ${item.price}'),
                                 leading: ClipRRect(
                                   borderRadius: BorderRadius.circular(5.0),
                                   child: Container(
@@ -105,7 +111,7 @@ class _CartListState extends State<CartList> {
                                     ),
                                     child: CachedNetworkImage(
                                       fit: BoxFit.cover,
-                                      imageUrl: item['image'],
+                                      imageUrl: images[(index + 1) % 3],
                                       placeholder: (context, url) => Center(
                                           child: CircularProgressIndicator()
                                       ),
@@ -114,7 +120,7 @@ class _CartListState extends State<CartList> {
                                   ),
                                 ),
                                 title: Text(
-                                  item['name'],
+                                  item.name,
                                   style: TextStyle(
                                       fontSize: 14
                                   ),
@@ -155,7 +161,7 @@ class _CartListState extends State<CartList> {
                           Expanded(
                             child: Text("TOTAL", style: TextStyle(fontSize: 16, color: Colors.grey),)
                           ),
-                          Text("\$41.24",  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                          Text("\$${cartPrv.grandTotalCartPrice}",  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                         ],
                       ),
                     ),
@@ -166,7 +172,7 @@ class _CartListState extends State<CartList> {
                           Expanded(
                               child: Text("Subtotal", style: TextStyle(fontSize: 14))
                           ),
-                          Text("\$36.00", style: TextStyle(fontSize: 14, color: Colors.grey)),
+                          Text("\$${cartPrv.totalCartPrice}", style: TextStyle(fontSize: 14, color: Colors.grey)),
                         ],
                       ),
                     ),
@@ -177,7 +183,7 @@ class _CartListState extends State<CartList> {
                           Expanded(
                               child: Text("Shipping",  style: TextStyle(fontSize: 14))
                           ),
-                          Text("\$2.00", style: TextStyle(fontSize: 14, color: Colors.grey)),
+                          Text("\$${cartPrv.shipping}", style: TextStyle(fontSize: 14, color: Colors.grey)),
                         ],
                       ),
                     ),
@@ -188,7 +194,7 @@ class _CartListState extends State<CartList> {
                           Expanded(
                               child: Text("Tax",  style: TextStyle(fontSize: 14))
                           ),
-                          Text("\$3.24", style: TextStyle(fontSize: 14, color: Colors.grey)),
+                          Text("\$${cartPrv.tax}", style: TextStyle(fontSize: 14, color: Colors.grey)),
                         ],
                       ),
                     ),
@@ -203,7 +209,16 @@ class _CartListState extends State<CartList> {
                 minWidth: double.infinity,
                 height: 40.0,
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: (cartPrv.isCartEmpty) ? null : () async{
+                    var res = await cartPrv.postCart();
+                    if(res.statusCode == 200)
+                      cartPrv.clearCart();
+                    setState(() {
+
+                    });
+                    var snackBar = SnackBar(content: Text(jsonDecode(res.body)));
+                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                  },
                   child: Text(
                     "CHECKOUT",
                     style: TextStyle(color: Colors.white, fontSize: 16),
